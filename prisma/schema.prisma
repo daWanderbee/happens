@@ -1,0 +1,143 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+/////////////////////////////
+// AUTH (NOT SHOWN IN APP)
+/////////////////////////////
+
+model User {
+  id            String    @id @default(uuid())
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String?   // ← REQUIRED by adapter (can be ignored)
+  createdAt     DateTime  @default(now())
+
+  identity   AnonymousIdentity?
+
+  accounts Account[]
+  sessions Session[]
+}
+
+
+
+/////////////////////////////
+// ANONYMOUS APP IDENTITY
+/////////////////////////////
+
+model AnonymousIdentity {
+  id        String   @id @default(uuid())
+  userId    String   @unique
+  username  String   @unique
+  avatarKey String
+  createdAt DateTime @default(now())
+
+  user      User     @relation(fields: [userId], references: [id])
+  posts     Post[]
+}
+
+/////////////////////////////
+// POSTS (PUBLICLY ANONYMOUS)
+/////////////////////////////
+
+model Post {
+  id          String      @id @default(uuid())
+  identityId  String
+  content     String
+  emotionTag  String?
+  state       PostState   @default(ACTIVE)
+  createdAt   DateTime    @default(now())
+  expiresAt   DateTime
+
+  identity    AnonymousIdentity @relation(fields: [identityId], references: [id])
+  reactions   Reaction[]
+  responses   SupportResponse[]
+  flags       PostFlag[]
+}
+
+enum PostState {
+  ACTIVE
+  FADING
+  EXPIRED
+}
+
+/////////////////////////////
+// EMPATHY REACTIONS
+/////////////////////////////
+
+model Reaction {
+  id        String   @id @default(uuid())
+  postId    String
+  type      String
+  createdAt DateTime @default(now())
+
+  post      Post     @relation(fields: [postId], references: [id])
+}
+
+/////////////////////////////
+// SUPPORT RESPONSES
+/////////////////////////////
+
+model SupportResponse {
+  id        String   @id @default(uuid())
+  postId    String
+  content   String
+  createdAt DateTime @default(now())
+
+  post      Post     @relation(fields: [postId], references: [id])
+}
+
+/////////////////////////////
+// SAFETY FLAGS
+/////////////////////////////
+
+model PostFlag {
+  id        String   @id @default(uuid())
+  postId    String
+  reason    String
+  createdAt DateTime @default(now())
+
+  post      Post     @relation(fields: [postId], references: [id])
+}
+
+model Account {
+  id                 String  @id @default(cuid())
+  userId             String
+  type               String
+  provider           String
+  providerAccountId  String
+  refresh_token      String?
+  access_token       String?
+  expires_at         Int?
+  token_type         String?
+  scope              String?
+  id_token           String?
+  session_state      String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
