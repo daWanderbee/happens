@@ -1,36 +1,125 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+![Happens Logo](./public/Banner.png)
 
-## Getting Started
+# Happens
 
-First, run the development server:
+**Happens** is an anonymous discussion platform designed to allow users
+to share failures, setbacks, and personal experiences without revealing
+their identity. The goal is to create a safe environment where people
+can openly express difficult experiences and receive support from
+others.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+------------------------------------------------------------------------
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Overview
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Most social media platforms highlight success, achievements, and curated
+lifestyles. This often discourages users from sharing struggles or
+failures due to fear of judgment.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+**Happens** addresses this problem by providing:
 
-## Learn More
+-   Anonymous posting
+-   Supportive discussions
+-   Community-driven interaction
+-   Behavioral insights on how people respond to vulnerable experiences
 
-To learn more about Next.js, take a look at the following resources:
+The platform focuses on empathy-driven conversations and aims to study
+the psychological impact of anonymity in online communities.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+------------------------------------------------------------------------
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Objectives
 
-## Deploy on Vercel
+-   Provide a safe anonymous space for users to share failures and
+    personal struggles.
+-   Encourage constructive discussion and peer support.
+-   Analyze user interaction patterns and emotional responses.
+-   Study how anonymity affects online behavior and empathy.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+------------------------------------------------------------------------
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Research Focus
+
+The project also explores behavioral aspects such as:
+
+-   Whether users respond with encouragement or criticism
+-   How anonymity affects honesty and openness
+-   Sentiment patterns in comments and discussions
+-   Community-driven emotional support
+
+This makes the project relevant to:
+
+-   Software Engineering
+-   Human Computer Interaction (HCI)
+-   User Experience (UX) Research
+
+------------------------------------------------------------------------
+
+## Features
+
+-   Anonymous user posting
+-   Comment and discussion threads
+-   Community interaction
+-   Sentiment and engagement analysis
+-   Secure identity-free participation
+-   Responsive modern UI
+
+------------------------------------------------------------------------
+
+## Tech Stack
+
+### Frontend
+
+-   Next.js
+-   React
+-   Tailwind CSS
+
+### Backend
+
+-   Node.js
+-   API Routes
+
+### Other Tools
+
+-   Cloudinary (media storage)
+-   Modern UI components
+-   Responsive design
+
+------------------------------------------------------------------------
+
+## Future Enhancements
+
+-   AI-based toxicity detection
+-   Sentiment analysis on comments
+-   Community moderation tools
+-   Topic-based discussion channels
+-   Mental health support resources
+
+------------------------------------------------------------------------
+
+## Author
+
+Asmita\
+Department of Computer Applications\
+School of Computer Science Engineering and Information Systems
+
+------------------------------------------------------------------------
+
+## Project Information
+
+-   Project Title: Happens -- An Anonymous Platform for Sharing Failures
+    & Experiences
+-   Domain: Software Engineering
+-   Semester: Winter Semester 2025--26
+-   Course: UBCA398J -- Internship / Dissertation
+
+------------------------------------------------------------------------
+
+## Vision
+
+"Happens" aims to normalize conversations about failures and struggles
+by providing a space where people can speak freely without the pressure
+of identity.
+
+Because sometimes the most important stories are the ones people are
+afraid to tell.
