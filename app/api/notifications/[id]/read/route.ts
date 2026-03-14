@@ -1,22 +1,23 @@
-import { getIdentity } from "@/lib/getIdentity";
+import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { NextResponse } from "next/server";
 
 export async function PATCH(
-  _req: Request,
-  { params }: { params: { id: string } },
+  _req: NextRequest,
+  context: { params: Promise<{ id: string }> },
 ) {
-  const identity = await getIdentity();
-  if (!identity)
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const { id } = await context.params;
 
-  await prisma.notification.updateMany({
-    where: {
-      id: params.id,
-      userId: identity.userId,
-    },
-    data: { isRead: true },
-  });
+  try {
+    await prisma.notification.update({
+      where: { id },
+      data: { read: true },
+    });
 
-  return NextResponse.json({ ok: true });
+    return NextResponse.json({ ok: true });
+  } catch (error) {
+    return NextResponse.json(
+      { error: "Failed to mark notification as read" },
+      { status: 500 },
+    );
+  }
 }

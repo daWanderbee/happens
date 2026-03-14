@@ -26,7 +26,7 @@ export default async function SupportPage() {
     <div className="w-full">
       <section
         className={cn(
-          "mx-auto w-full max-w-3xl min-h-screen rounded-t-3xl px-6 pt-10 pb-6 shadow-sm transition-colors",
+          "mx-auto w-full  min-h-screen rounded-t-3xl px-6 pt-10 pb-6 shadow-sm transition-colors",
           "bg-neutral-50 border border-black/5",
           "dark:bg-background dark:border-[hsl(193_31%_20%)]",
         )}

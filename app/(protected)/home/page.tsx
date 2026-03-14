@@ -28,7 +28,7 @@ export default async function ReadPage() {
         "
       >
         {/* ✅ Centered content column — full on mobile, capped on desktop */}
-        <div className="mx-auto w-full max-w-lg">
+        <div className="mx-auto w-full max-w-2xl">
           <HomeFeed posts={posts} />
         </div>
       </section>
