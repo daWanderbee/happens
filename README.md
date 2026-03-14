@@ -1,4 +1,4 @@
-![Happens Logo](./public/Banner.png)
+![Preview](https://res.cloudinary.com/wanderbee/image/upload/v1773485687/Banner_Post_2_ecrn7h.png)
 
 # Happens
 
