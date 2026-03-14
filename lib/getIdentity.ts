@@ -148,77 +148,7 @@ function generateUsername(): string {
 
 // Enhanced avatar generator with more emojis
 function generateAvatarKey(): string {
-  const avatars = [
-    // Mammals
-    "🐼",
-    "🦊",
-    "🐻",
-    "🐨",
-    "🐯",
-    "🦁",
-    "🐺",
-    "🦝",
-    "🦡",
-    "🦦",
-    "🦘",
-    "🦙",
-    "🐘",
-    "🦏",
-    "🦒",
-    "🦛",
-    "🐪",
-    "🐫",
-    "🦬",
-    "🐃",
-    "🐂",
-    "🐄",
-    "🦌",
-    "🐎",
-
-    // Birds
-    "🦅",
-    "🦉",
-    "🦚",
-    "🦜",
-    "🦩",
-    "🦢",
-    "🦆",
-    "🦃",
-    "🐧",
-    "🕊️",
-    "🦇",
-
-    // Marine
-    "🐬",
-    "🦈",
-    "🐋",
-    "🐙",
-    "🦑",
-    "🐠",
-    "🐡",
-    "🦭",
-    "🐢",
-    "🦀",
-    "🦞",
-
-    // Reptiles & Amphibians
-    "🐊",
-    "🦎",
-    "🐸",
-    "🐍",
-    "🐲",
-    "🦕",
-    "🦖",
-
-    // Mythical/Fantasy
-    "🦄",
-    "🐉",
-    "🦋",
-    "🐝",
-    "🦗",
-    "🐞",
-  ];
-
+ const avatars = ["panda", "capybara", "bear", "owl", "turtle"];
   return avatars[Math.floor(Math.random() * avatars.length)];
 }
 
