@@ -1,12 +1,11 @@
-import GoogleProvider from "next-auth/providers/google";
-import EmailProvider from "next-auth/providers/email";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { prisma } from "@/lib/prisma";
-import type { NextAuthOptions } from "next-auth";
+import GoogleProvider from "next-auth/providers/google";
+import EmailProvider from "next-auth/providers/email";
+import { NextAuthOptions } from "next-auth";
 
 export const authOptions: NextAuthOptions = {
   trustHost: true,
-
   adapter: PrismaAdapter(prisma),
 
   session: {
@@ -31,4 +30,15 @@ export const authOptions: NextAuthOptions = {
       from: process.env.EMAIL_FROM,
     }),
   ],
+
+  callbacks: {
+    async session({ session, user }) {
+      if (session.user && user) {
+        session.user.id = user.id;
+      }
+      return session;
+    },
+  },
+
+  debug: true,
 };

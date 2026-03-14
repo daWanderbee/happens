@@ -1,12 +1,13 @@
 import { prisma } from "@/lib/prisma";
+import { getIdentity } from "@/lib/getIdentity";
 
 export async function POST(req: Request) {
   const body = await req.json();
 
-  const identity = await prisma.anonymousIdentity.findFirst();
+  const identity = await getIdentity();
 
   if (!identity) {
-    return Response.json({ error: "No identity found" }, { status: 400 });
+    return Response.json({ error: "Login required" }, { status: 401 });
   }
 
   const expiresAt = new Date();
@@ -17,6 +18,7 @@ export async function POST(req: Request) {
       identityId: identity.id,
       content: body.content,
       expiresAt,
+      emotionTag: body.emotionTag ?? null,
     },
   });
 

@@ -1,6 +1,7 @@
 import { getServerSession } from "next-auth";
-import { redirect } from "next/navigation";
 import { authOptions } from "@/lib/auth";
+import { redirect } from "next/navigation";
+import ClientShell from "./clientShell";
 
 export default async function ProtectedLayout({
   children,
@@ -10,8 +11,8 @@ export default async function ProtectedLayout({
   const session = await getServerSession(authOptions);
 
   if (!session) {
-    redirect("/signin");
+    redirect("/");
   }
 
-  return <>{children}</>;
+  return <ClientShell>{children}</ClientShell>;
 }

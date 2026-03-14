@@ -16,16 +16,15 @@ model User {
   name          String?
   email         String?   @unique
   emailVerified DateTime?
-  image         String?   // ← REQUIRED by adapter (can be ignored)
+  image         String? // ← REQUIRED by adapter (can be ignored)
   createdAt     DateTime  @default(now())
 
-  identity   AnonymousIdentity?
+  identity AnonymousIdentity?
 
   accounts Account[]
   sessions Session[]
+   notifications Notification[] 
 }
-
-
 
 /////////////////////////////
 // ANONYMOUS APP IDENTITY
@@ -38,27 +37,33 @@ model AnonymousIdentity {
   avatarKey String
   createdAt DateTime @default(now())
 
-  user      User     @relation(fields: [userId], references: [id])
-  posts     Post[]
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  supportResponses SupportResponse[]
+  posts Post[]
+  reactions Reaction[]
 }
+
+
 
 /////////////////////////////
 // POSTS (PUBLICLY ANONYMOUS)
 /////////////////////////////
 
 model Post {
-  id          String      @id @default(uuid())
-  identityId  String
-  content     String
-  emotionTag  String?
-  state       PostState   @default(ACTIVE)
-  createdAt   DateTime    @default(now())
-  expiresAt   DateTime
+  id         String    @id @default(uuid())
+  identityId String
+  content    String
+  emotionTag String?
+  state      PostState @default(ACTIVE)
+  createdAt  DateTime  @default(now())
+  expiresAt  DateTime
 
-  identity    AnonymousIdentity @relation(fields: [identityId], references: [id])
-  reactions   Reaction[]
-  responses   SupportResponse[]
-  flags       PostFlag[]
+identity AnonymousIdentity @relation(fields: [identityId], references: [id], onDelete: Cascade)
+
+  reactions Reaction[]
+  responses SupportResponse[]
+  flags     PostFlag[]
 }
 
 enum PostState {
@@ -72,12 +77,17 @@ enum PostState {
 /////////////////////////////
 
 model Reaction {
-  id        String   @id @default(uuid())
-  postId    String
-  type      String
-  createdAt DateTime @default(now())
+  id         String   @id @default(uuid())
+  postId     String
+  identityId String
+  type       String
+  createdAt  DateTime @default(now())
 
-  post      Post     @relation(fields: [postId], references: [id])
+  
+  post      Post              @relation(fields: [postId], references: [id], onDelete: Cascade)
+   identity  AnonymousIdentity @relation(fields: [identityId], references: [id], onDelete: Cascade)
+
+  @@unique([postId, identityId]) 
 }
 
 /////////////////////////////
@@ -85,12 +95,14 @@ model Reaction {
 /////////////////////////////
 
 model SupportResponse {
-  id        String   @id @default(uuid())
-  postId    String
-  content   String
-  createdAt DateTime @default(now())
+  id         String   @id @default(cuid())
+  postId     String
+  content    String
+  identityId String?
+  createdAt  DateTime @default(now())
 
-  post      Post     @relation(fields: [postId], references: [id])
+  post       Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+identity   AnonymousIdentity? @relation(fields: [identityId], references: [id], onDelete: Cascade)
 }
 
 /////////////////////////////
@@ -103,22 +115,22 @@ model PostFlag {
   reason    String
   createdAt DateTime @default(now())
 
-  post      Post     @relation(fields: [postId], references: [id])
+  post Post @relation(fields: [postId], references: [id])
 }
 
 model Account {
-  id                 String  @id @default(cuid())
-  userId             String
-  type               String
-  provider           String
-  providerAccountId  String
-  refresh_token      String?
-  access_token       String?
-  expires_at         Int?
-  token_type         String?
-  scope              String?
-  id_token           String?
-  session_state      String?
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -140,4 +152,24 @@ model VerificationToken {
   expires    DateTime
 
   @@unique([identifier, token])
+}
+
+model Notification {
+  id          String   @id @default(cuid())
+  userId      String
+  type        NotificationType
+  postId      String?
+  commentId   String?
+  actorLabel  String?   // "Someone"
+  meta        Json?
+  isRead      Boolean   @default(false)
+  createdAt   DateTime  @default(now())
+
+  user        User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+enum NotificationType {
+  REACTION
+  COMMENT
+  MILESTONE
 }

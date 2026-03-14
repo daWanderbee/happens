@@ -1,16 +1,30 @@
 import { prisma } from "@/lib/prisma";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 
 export async function GET() {
-  // TEMP: get first identity (will replace after auth)
-  const identity = await prisma.anonymousIdentity.findFirst();
+  const session = await getServerSession(authOptions);
 
-  if (!identity) {
-    return Response.json({ error: "No identity found" }, { status: 400 });
+  if (!session?.user?.email) {
+    return Response.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const user = await prisma.user.findUnique({
+    where: {
+      email: session.user.email,
+    },
+    include: {
+      identity: true,
+    },
+  });
+
+  if (!user?.identity) {
+    return Response.json({ error: "Identity not found" }, { status: 404 });
   }
 
   const posts = await prisma.post.findMany({
     where: {
-      identityId: identity.id,
+      identityId: user.identity.id,
     },
     orderBy: {
       createdAt: "desc",
@@ -18,8 +32,8 @@ export async function GET() {
   });
 
   return Response.json({
-    username: identity.username,
-    avatarKey: identity.avatarKey,
+    username: user.identity.username,
+    avatarKey: user.identity.avatarKey,
     posts,
   });
 }

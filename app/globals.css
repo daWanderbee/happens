@@ -1,0 +1,231 @@
+@import url("https://fonts.googleapis.com/css2?family=Shadows+Into+Light&display=swap");
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* =========================
+       Base surfaces
+    ========================== */
+
+    --background: 0 0% 100%;              /* White (#FFFFFF) */
+    --foreground: 220 15% 15%;             /* Very dark blue-gray (#1F2933) */
+
+    /* =========================
+       Card surfaces
+    ========================== */
+
+    --card: 0 0% 100%;                     /* White (#FFFFFF) */
+    --card-foreground: 220 15% 15%;        /* Dark blue-gray (#1F2933) */
+
+    /* =========================
+       Primary – #5D51DA
+    ========================== */
+
+    --primary: 247 63% 59%;                /* Indigo / Violet (#5D51DA) */
+    --primary-foreground: 0 0% 100%;       /* White (#FFFFFF) */
+
+    /* =========================
+       Secondary – #356366
+    ========================== */
+
+    --secondary: 193 31% 30%;              /* Deep teal (#356366) */
+    --secondary-foreground: 0 0% 100%;     /* White (#FFFFFF) */
+
+    /* =========================
+       Muted / support – #9F7763
+    ========================== */
+
+    --muted: 19 19% 53%;                   /* Warm brown-muted (#9F7763) */
+    --muted-foreground: 0 0% 100%;         /* White (#FFFFFF) */
+
+    /* =========================
+       Accent (reuses secondary)
+    ========================== */
+
+    --accent: 193 31% 30%;                 /* Teal accent (#356366) */
+    --accent-foreground: 0 0% 100%;        /* White (#FFFFFF) */
+
+    /* =========================
+       Borders & focus ring
+    ========================== */
+
+    --border: 220 13% 91%;                 /* Light gray (#E5E7EB) */
+    --input: 220 13% 91%;                  /* Light gray (#E5E7EB) */
+    --ring: 247 63% 59%;                   /* Primary indigo (#5D51DA) */
+
+    /* =========================
+       Shape
+    ========================== */
+
+    --radius: 1.5rem;                      /* Large rounded corners */
+
+    /* =========================
+       Sidebar (Light mode)
+    ========================== */
+
+    --sidebar-background: 0 0% 98%;        /* Off-white (#FAFAFA) */
+    --sidebar-foreground: 240 5.3% 26.1%;  /* Dark gray-blue (#374151) */
+
+    --sidebar-primary: 240 5.9% 10%;       /* Near black (#111827) */
+    --sidebar-primary-foreground: 0 0% 98%;/* Off-white (#FAFAFA) */
+
+    --sidebar-accent: 240 4.8% 95.9%;      /* Very light gray (#F3F4F6) */
+    --sidebar-accent-foreground: 240 5.9% 10%; /* Near black (#111827) */
+
+    --sidebar-border: 220 13% 91%;          /* Light gray (#E5E7EB) */
+    --sidebar-ring: 217.2 91.2% 59.8%;      /* Blue focus ring (#3B82F6) */
+  }
+
+  /* =========================
+     Dark mode overrides
+  ========================== */
+
+.dark {
+    /* =========================
+       Base surfaces
+    ========================== */
+
+    --background: 193 31% 12%;             /* Deep dark teal (#0F2E30) */
+    --foreground: 0 0% 96%;                /* Soft white (#F5F5F5) */
+
+    /* =========================
+       Card surfaces
+    ========================== */
+
+    --card: 193 31% 15%;                   /* Dark teal card (#163A3D) */
+    --card-foreground: 0 0% 96%;           /* Soft white */
+
+    /* =========================
+       Primary (still Indigo)
+    ========================== */
+
+    --primary: 247 63% 59%;                /* Softer indigo for dark mode */
+    --primary-foreground: 0 0% 100%;
+
+    /* =========================
+       Secondary – Brown accent
+    ========================== */
+
+    --secondary: 19 19% 45%;               /* Muted warm brown (#8A6A58) */
+    --secondary-foreground: 0 0% 100%;
+
+    /* =========================
+       Muted / emotional support
+    ========================== */
+
+    --muted: 193 31% 22%;                  /* Soft teal-muted */
+    --muted-foreground: 0 0% 90%;
+
+    /* =========================
+       Accent – Teal highlight
+    ========================== */
+
+    --accent: 193 31% 30%;                 /* Brand teal (#356366) */
+    --accent-foreground: 0 0% 100%;
+
+    /* =========================
+       Borders & focus
+    ========================== */
+
+    --border: 193 31% 25%;                 /* Teal border */
+    --input: 193 31% 22%;
+    --ring: 247 63% 65%;                   /* Indigo ring */
+
+    /* =========================
+       Sidebar (Dark, emotional)
+    ========================== */
+
+    --sidebar-background: 193 31% 10%;     /* Almost-black teal */
+    --sidebar-foreground: 0 0% 92%;
+
+    --sidebar-primary: 247 63% 65%;        /* Indigo */
+    --sidebar-primary-foreground: 0 0% 100%;
+
+    --sidebar-accent: 19 19% 35%;          /* Deep brown accent */
+    --sidebar-accent-foreground: 0 0% 96%;
+
+    --sidebar-border: 193 31% 20%;          /* Teal border */
+    --sidebar-ring: 247 63% 65%;
+  }
+}
+
+@layer utilities {
+  @keyframes fade-in-up {
+    from {
+      opacity: 0;
+      transform: translateY(12px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .animate-fade-in-up {
+    animation: fade-in-up 0.6s ease-out both;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+@layer utilities {
+  /* Island entrance */
+  @keyframes island-float-in {
+    from {
+      opacity: 0;
+      transform: translate(-50%, 20px) scale(0.95);
+    }
+    to {
+      opacity: 1;
+      transform: translate(-50%, 0) scale(1);
+    }
+  }
+
+  .animate-island {
+    animation: island-float-in 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+@layer utilities {
+  /* Scale pulse on interaction */
+  @keyframes island-pulse {
+    0% {
+      transform: translateX(-50%) scale(1);
+    }
+    40% {
+      transform: translateX(-50%) scale(1.04);
+    }
+    100% {
+      transform: translateX(-50%) scale(1);
+    }
+  }
+
+  .animate-pulse-once {
+    animation: island-pulse 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+}
+
+  /* Glow for active pill */
+  @keyframes soft-glow {
+    0% { box-shadow: 0 0 0 rgba(93,81,218,0); }
+    50% { box-shadow: 0 0 16px rgba(93,81,218,0.45); }
+    100% { box-shadow: 0 0 0 rgba(93,81,218,0); }
+  }
+
+  .animate-glow {
+    animation: soft-glow 2.2s ease-in-out infinite;
+  }
+}
+
+::view-transition-old(root), ::view-transition-new(root) {
+    animation: none;
+    mix-blend-mode: normal;
+}
