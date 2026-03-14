@@ -2,7 +2,7 @@
 
 import { useRef, useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
-import DynamicIsland from "@/components/ui/DynamicIsland";
+// import DynamicIsland from "./DynamicIsland";
 
 type Screen = "home" | "share";
 
@@ -48,14 +48,14 @@ export default function SwipeShell({
   return (
     <>
       {/* 🔹 DYNAMIC ISLAND — DERIVED FROM SCREEN */}
-      <DynamicIsland>
+      {/* <DynamicIsland>
         {screen === "home" && (
           <span className="text-sm font-medium">Reading</span>
         )}
         {screen === "share" && (
           <span className="text-sm font-medium">Share something</span>
         )}
-      </DynamicIsland>
+      </DynamicIsland> */}
 
       {/* 🔹 SWIPE SCREENS */}
       <div

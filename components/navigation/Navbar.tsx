@@ -8,7 +8,11 @@ import { useEffect, useState } from "react";
 import { Menu } from "lucide-react";
 
 
-export default function Navbar({ setIsOpen }) {
+type NavbarProps = {
+  setIsOpen: (open: boolean) => void;
+};
+
+export default function Navbar({ setIsOpen }: NavbarProps) {
   const [unreadCount, setUnreadCount] = useState(0);
   const [mounted, setMounted] = useState(false);
 

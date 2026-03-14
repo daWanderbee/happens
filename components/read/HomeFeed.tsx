@@ -13,7 +13,7 @@ export default async function HomeFeed({
   posts: PostWithIdentity[];
 }) {
   const session = await getServerSession(authOptions);
-  const myUserId = session?.user?.id;
+  const myUserId = (session?.user as { id?: string })?.id;
 
   return (
     <div className="space-y-4 w-full">

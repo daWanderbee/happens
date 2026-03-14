@@ -4,8 +4,19 @@ import GoogleProvider from "next-auth/providers/google";
 import EmailProvider from "next-auth/providers/email";
 import { NextAuthOptions } from "next-auth";
 
+// Extend NextAuth session user type to include 'id'
+declare module "next-auth" {
+  interface Session {
+    user: {
+      id: string;
+      name?: string | null;
+      email?: string | null;
+      image?: string | null;
+    };
+  }
+}
+
 export const authOptions: NextAuthOptions = {
-  trustHost: true,
   adapter: PrismaAdapter(prisma),
 
   session: {

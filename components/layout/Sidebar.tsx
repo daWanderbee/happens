@@ -60,7 +60,7 @@ export default function Sidebar({ isOpen, setIsOpen }: Props) {
             {identity?.name ? `Hello ${identity.name}` : "Hello"}
           </span>
 
-          <ThemeToggle duration={600} />
+          <ThemeToggle />
         </div>
 
         {/* ── Nav ── */}

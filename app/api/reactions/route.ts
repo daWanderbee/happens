@@ -47,6 +47,9 @@ export async function POST(req: Request) {
       },
     });
 
+    if (!post) {
+      return NextResponse.json({ error: "Post not found" }, { status: 404 });
+    }
     if (post?.identity?.userId !== identity.userId) {
       await prisma.notification.create({
         data: {
@@ -58,7 +61,6 @@ export async function POST(req: Request) {
         },
       });
     }
-
 
     return NextResponse.json(reaction);
   } catch (e: any) {
@@ -86,7 +88,7 @@ export async function GET(req: Request) {
           globalThis.reactionStream = controller;
         },
         cancel() {
-          globalThis.reactionStream = null;
+          globalThis.reactionStream = undefined;
         },
       });
 

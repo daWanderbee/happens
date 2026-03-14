@@ -4,7 +4,7 @@ export async function GET() {
       globalThis.reactionStream = controller;
     },
     cancel() {
-      globalThis.reactionStream = null;
+      globalThis.reactionStream = undefined;
     },
   });
 
