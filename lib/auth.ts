@@ -21,6 +21,8 @@ export const authOptions: NextAuthOptions = {
 
   session: {
     strategy: "database",
+    maxAge: 60 * 60 * 24 * 30, // 30 days
+    updateAge: 60 * 60 * 24, // refresh session every 24 hours
   },
 
   providers: [
