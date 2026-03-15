@@ -61,7 +61,7 @@ export default function SharePage() {
           <div className="px-6 py-6">
             <textarea
               value={content}
-              maxLength={500}
+              maxLength={10000}
               onChange={(e) => setContent(e.target.value)}
               placeholder="Share something you’ve been holding in…"
               className={cn(
@@ -73,7 +73,7 @@ export default function SharePage() {
             />
 
             <div className="mt-2 text-right text-xs text-neutral-400 dark:text-foreground/40">
-              {content.length}/500
+              {content.length}/10000
             </div>
           </div>
 

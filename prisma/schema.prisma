@@ -43,6 +43,7 @@ model AnonymousIdentity {
   posts Post[]
   reactions Reaction[]
   flags PostFlag[]
+  savedPosts SavedPost[]   
 }
 
 
@@ -64,7 +65,8 @@ identity AnonymousIdentity @relation(fields: [identityId], references: [id], onD
 
   reactions Reaction[]
   responses SupportResponse[]
-  flags     PostFlag[]
+  flags     PostFlag[] 
+  savedPosts SavedPost[]   
 }
 
 enum PostState {
@@ -117,7 +119,7 @@ model PostFlag {
   reason     String
   createdAt  DateTime @default(now())
 
-  post     Post              @relation(fields: [postId], references: [id])
+  post     Post              @relation(fields: [postId], references: [id],onDelete:Cascade)
   identity AnonymousIdentity @relation(fields: [identityId], references: [id])
 
   @@unique([postId, identityId])
@@ -177,4 +179,20 @@ enum NotificationType {
   REACTION
   COMMENT
   MILESTONE
+}
+
+///////////
+//SAVE POST
+///////////
+
+model SavedPost {
+  id         String   @id @default(uuid())
+  identityId String
+  postId     String
+  createdAt  DateTime @default(now())
+
+  identity AnonymousIdentity @relation(fields: [identityId], references: [id], onDelete: Cascade)
+  post     Post              @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@unique([identityId, postId])
 }

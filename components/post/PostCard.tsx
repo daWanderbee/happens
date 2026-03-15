@@ -16,6 +16,7 @@ import {
   faComment,
   faPaperPlane,
   faTrash,
+  faPen
 } from "@fortawesome/free-solid-svg-icons";
 import Overlay from "../ui/Overlay";
 import ModalPortal from "../ui/ModalPortal";
@@ -150,6 +151,9 @@ export default function PostCard({
   const [showCommentsModal, setShowCommentsModal] = useState(false);
   const [showCommentInput, setShowCommentInput] = useState(false);
   const [newComment, setNewComment] = useState("");
+  const [editing, setEditing] = useState(false);
+  const [editContent, setEditContent] = useState(content);
+  const [savingEdit, setSavingEdit] = useState(false);
 
   const longPressTimer = useRef<NodeJS.Timeout | null>(null);
 
@@ -212,7 +216,64 @@ export default function PostCard({
       longPressTimer.current = null;
     }
   }
+  async function handleUpdatePost() {
+    if (!editContent.trim()) return;
 
+    try {
+      setSavingEdit(true);
+
+      const res = await fetch(`/api/posts/${postId}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          content: editContent,
+        }),
+      });
+
+      if (!res.ok) throw new Error("Update failed");
+
+      toast.success("Post updated");
+      setEditing(false);
+      window.location.reload(); // or router.refresh()
+    } catch (err) {
+      toast.error("Failed to update post");
+    } finally {
+      setSavingEdit(false);
+    }
+  }
+
+  async function handleSave() {
+    try {
+      const res = await fetch("/api/posts/save", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ postId }),
+      });
+
+      if (!res.ok) {
+        throw new Error("Save failed");
+      }
+
+      const data = await res.json();
+
+      setSaved(data.saved);
+
+      if (data.saved) {
+        toast.success("Post saved");
+      } else {
+        toast("Post removed from saved");
+      }
+    } catch (err) {
+      toast.error("Failed to save post");
+      console.error(err);
+    }
+  } 
+
+  
   async function handleAddComment() {
     if (!newComment.trim()) return;
 
@@ -439,6 +500,8 @@ export default function PostCard({
             onClick={() => {
               vibrate(12);
               setSaved(!saved);
+              handleSave();
+              
             }}
           />
 
@@ -505,6 +568,17 @@ export default function PostCard({
                             toast.error("Failed to delete post");
                           }
                         });
+                      }}
+                    />
+                  )}
+
+                  {isMine && (
+                    <MenuButton
+                      icon={faPen}
+                      label="Edit"
+                      onClick={() => {
+                        setShowMenu(false);
+                        setEditing(true);
                       }}
                     />
                   )}
@@ -651,6 +725,43 @@ export default function PostCard({
                     </div>
                   </div>
                 )}
+              </div>
+            </div>
+          </ModalPortal>
+        </>
+      )}
+
+      {editing && (
+        <>
+          <Overlay open onClick={() => setEditing(false)} />
+
+          <ModalPortal open>
+            <div className="fixed inset-0 z-[10000] flex items-center justify-center">
+              <div className="w-full max-w-xl rounded-2xl bg-card border shadow-xl p-6 space-y-4">
+                <h3 className="text-lg font-semibold">Edit Post</h3>
+
+                <textarea
+                  value={editContent}
+                  onChange={(e) => setEditContent(e.target.value)}
+                  className="w-full min-h-[120px] resize-none rounded-xl border p-3 bg-muted/30"
+                />
+
+                <div className="flex justify-end gap-2">
+                  <button
+                    onClick={() => setEditing(false)}
+                    className="px-4 py-2 rounded-lg bg-muted"
+                  >
+                    Cancel
+                  </button>
+
+                  <button
+                    onClick={handleUpdatePost}
+                    disabled={savingEdit}
+                    className="px-4 py-2 rounded-lg bg-primary text-white"
+                  >
+                    {savingEdit ? "Saving..." : "Save"}
+                  </button>
+                </div>
               </div>
             </div>
           </ModalPortal>

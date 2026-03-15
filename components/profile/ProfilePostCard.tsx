@@ -10,6 +10,7 @@ import {
   faChevronDown,
   faChevronUp,
   faXmark,
+  
 } from "@fortawesome/free-solid-svg-icons";
 
 interface Response {
@@ -30,9 +31,14 @@ interface Post {
 export function ProfilePostCard({ post }: { post: Post }) {
   const [open, setOpen] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const [editing, setEditing] = useState(false);
+  const [editContent, setEditContent] = useState(post.content);
+  const [savingEdit, setSavingEdit] = useState(false);
 
   const isLong = post.content.length > 240;
   const preview = isLong ? post.content.slice(0, 240) + "…" : post.content;
+
+  
 
   return (
     <>
