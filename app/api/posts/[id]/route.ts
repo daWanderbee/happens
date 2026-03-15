@@ -1,11 +1,12 @@
+// app/api/share/post/[id]/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
 export async function GET(
-  req: NextRequest, // ✅ NextRequest not Request
-  { params }: { params: Promise<{ id: string }> },
+  req: NextRequest,
+  context: { params: Promise<{ id: string }> },
 ) {
-  const { id } = await params;
+  const { id } = await context.params;
 
   try {
     const post = await prisma.post.findUnique({
@@ -28,7 +29,7 @@ export async function GET(
       reactions: post.reactions.length,
       responses: post.responses.length,
     });
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: "Server error" }, { status: 500 });
   }
 }
