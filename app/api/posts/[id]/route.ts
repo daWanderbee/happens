@@ -1,39 +1,34 @@
+import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { NextResponse } from "next/server";
 
-export async function PATCH(
-  req: Request,
+export async function GET(
+  request: NextRequest,
   context: { params: Promise<{ id: string }> },
 ) {
+  const { id } = await context.params;
+
   try {
-    const { id } = await context.params; // ✅ FIX
-
-    const body = await req.json();
-    const { content } = body;
-
-    if (!id) {
-      return NextResponse.json({ error: "Missing post id" }, { status: 400 });
-    }
-
     const post = await prisma.post.findUnique({
       where: { id },
+      include: {
+        reactions: true,
+        responses: true,
+      },
     });
 
     if (!post) {
       return NextResponse.json({ error: "Post not found" }, { status: 404 });
     }
 
-    const updated = await prisma.post.update({
-      where: { id },
-      data: {
-        content,
-      },
+    return NextResponse.json({
+      id: post.id,
+      content: post.content,
+      emotionTag: post.emotionTag,
+      createdAt: post.createdAt,
+      reactions: post.reactions.length,
+      responses: post.responses.length,
     });
-
-    return NextResponse.json(updated);
-  } catch (error) {
-    console.error(error);
-
-    return NextResponse.json({ error: "Update failed" }, { status: 500 });
+  } catch (err) {
+    return NextResponse.json({ error: "Server error" }, { status: 500 });
   }
 }
