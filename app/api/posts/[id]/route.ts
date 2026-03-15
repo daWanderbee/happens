@@ -28,7 +28,7 @@ export async function GET(
       reactions: post.reactions.length,
       responses: post.responses.length,
     });
-  } catch (err) {
+  } catch (error) {
     return NextResponse.json({ error: "Server error" }, { status: 500 });
   }
 }
