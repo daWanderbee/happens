@@ -119,7 +119,16 @@ export default async function ProfilePage() {
               </p>
             )}
             {identity.posts.map((post) => (
-              <ProfilePostCard key={post.id} post={post} />
+              <ProfilePostCard
+                key={post.id}
+                post={{
+                  ...post,
+                  responses: post.responses.map((r) => ({
+                    ...r,
+                    createdAt: r.createdAt.toISOString(),
+                  })),
+                }}
+              />
             ))}
           </div>
         </div>
