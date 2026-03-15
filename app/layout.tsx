@@ -3,6 +3,7 @@ import { Roboto } from "next/font/google";
 import "@fortawesome/fontawesome-svg-core/styles.css";
 import { config } from "@fortawesome/fontawesome-svg-core";
 import Providers from "./providers";
+import { Toaster } from "react-hot-toast";
 
 config.autoAddCss = false;
 
@@ -24,6 +25,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={roboto.className}>
+        <Toaster position="top-center" />
         <Providers>{children}</Providers>
       </body>
     </html>

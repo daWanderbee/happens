@@ -42,6 +42,7 @@ model AnonymousIdentity {
   supportResponses SupportResponse[]
   posts Post[]
   reactions Reaction[]
+  flags PostFlag[]
 }
 
 
@@ -110,12 +111,16 @@ identity   AnonymousIdentity? @relation(fields: [identityId], references: [id], 
 /////////////////////////////
 
 model PostFlag {
-  id        String   @id @default(uuid())
-  postId    String
-  reason    String
-  createdAt DateTime @default(now())
+  id         String   @id @default(uuid())
+  postId     String
+  identityId String
+  reason     String
+  createdAt  DateTime @default(now())
 
-  post Post @relation(fields: [postId], references: [id])
+  post     Post              @relation(fields: [postId], references: [id])
+  identity AnonymousIdentity @relation(fields: [identityId], references: [id])
+
+  @@unique([postId, identityId])
 }
 
 model Account {

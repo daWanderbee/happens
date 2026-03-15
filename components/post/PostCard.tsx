@@ -15,6 +15,7 @@ import {
   faXmark,
   faComment,
   faPaperPlane,
+  faTrash,
 } from "@fortawesome/free-solid-svg-icons";
 import Overlay from "../ui/Overlay";
 import ModalPortal from "../ui/ModalPortal";
@@ -24,6 +25,7 @@ import {
   HoverCardTrigger,
 } from "@/components/ui/hover-card";
 
+import { toast } from "react-hot-toast";
 /* =========================
    Types
 ========================= */
@@ -44,7 +46,52 @@ type PostCardProps = {
   author: string;
   createdAt: Date;
   isMine?: boolean; // ✅ add this
+  identityId?: string; // 👈 add this
 };
+
+function showConfirmationToast(onConfirm: () => void) {
+  toast.custom((t) => (
+    <div
+      className={cn(
+        "flex flex-col gap-3 p-4 rounded-2xl border shadow-xl min-w-[220px]",
+        "bg-white border-black/5",
+        "dark:bg-[hsl(193_31%_13%)] dark:border-[hsl(193_31%_22%)]",
+      )}
+    >
+      <p className="text-[13.5px] font-medium text-neutral-800 dark:text-foreground">
+        Are you sure?
+      </p>
+
+      <div className="flex gap-2">
+        {/* Confirm */}
+        <button
+          onClick={() => {
+            toast.dismiss(t.id);
+            onConfirm();
+          }}
+          className={cn(
+            "flex-1 py-1.5 rounded-xl text-xs font-semibold transition active:scale-95",
+            "bg-[#5D51DA] text-white hover:bg-[#5D51DA]/90",
+          )}
+        >
+          Yes
+        </button>
+
+        {/* Cancel */}
+        <button
+          onClick={() => toast.dismiss(t.id)}
+          className={cn(
+            "flex-1 py-1.5 rounded-xl text-xs font-semibold transition active:scale-95",
+            "bg-neutral-100 text-neutral-500 hover:bg-neutral-200",
+            "dark:bg-[hsl(193_31%_20%)] dark:text-foreground/60 dark:hover:bg-[hsl(193_31%_24%)]",
+          )}
+        >
+          No
+        </button>
+      </div>
+    </div>
+  ));
+}
 
 function timeAgo(date: Date) {
   const seconds = Math.floor((Date.now() - new Date(date).getTime()) / 1000);
@@ -84,6 +131,7 @@ export default function PostCard({
   author = "Anonymous",
   createdAt,
   isMine = false, // ✅ add this
+  identityId, // 👈 add this
 }: PostCardProps) {
   /* =========================
      State
@@ -424,9 +472,42 @@ export default function PostCard({
                     onClick={() => {
                       setShowMenu(false);
                       vibrate(12);
-                      // Add share logic
+                      const sharePost = async () => {
+                        const url = `${globalThis.location.origin}/post/${postId}`;
+
+                        await navigator.clipboard.writeText(url);
+                        alert("Link copied!");
+                      };
+                      sharePost();
                     }}
                   />
+
+                  {isMine && (
+                    <MenuButton
+                      icon={faTrash}
+                      label="Delete"
+                      onClick={() => {
+                        setShowMenu(false);
+                        vibrate(12);
+
+                        showConfirmationToast(async () => {
+                          const res = await fetch(
+                            `/api/posts/${postId}/delete`,
+                            {
+                              method: "DELETE",
+                            },
+                          );
+
+                          if (res.ok) {
+                            toast.success("Post deleted successfully!");
+                            window.location.reload();
+                          } else {
+                            toast.error("Failed to delete post");
+                          }
+                        });
+                      }}
+                    />
+                  )}
 
                   <div className="my-1 border-t" />
 
@@ -434,10 +515,18 @@ export default function PostCard({
                     icon={faFlag}
                     label="Report"
                     danger
-                    onClick={() => {
+                    onClick={async () => {
                       setShowMenu(false);
                       vibrate(12);
-                      // Add report logic
+                      await fetch("/api/posts/report", {
+                        method: "POST",
+                        body: JSON.stringify({
+                          postId: postId,
+                          reason: "Inappropriate content",
+                        }),
+                      });
+
+                      alert("Post reported");
                     }}
                   />
                 </div>

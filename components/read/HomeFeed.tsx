@@ -35,6 +35,7 @@ export default async function HomeFeed({
               : post.identity.username
           }
           createdAt={post.createdAt}
+          isMine={myUserId === post.identity.userId}
         />
       ))}
     </div>
