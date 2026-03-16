@@ -8,7 +8,7 @@ import { usePathname } from "next/navigation";
 import { ThemeToggle } from "../ui/theme-toggle";
 import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
-import { faBookmark } from "@fortawesome/free-solid-svg-icons";
+import { faBookmark, faComments } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 const navItems = [
@@ -16,6 +16,7 @@ const navItems = [
   { name: "Notifications", href: "/notifications", icon: Bell },
   { name: "Profile", href: "/profile", icon: User },
   { name: "Saved", href: "/saved", icon: faBookmark },
+  { name: "Chats", href: "/chat", icon: faComments },
 ];
 
 interface Props {

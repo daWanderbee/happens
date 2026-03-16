@@ -7,120 +7,81 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-/////////////////////////////
-// AUTH (NOT SHOWN IN APP)
-/////////////////////////////
-
 model User {
-  id            String    @id @default(uuid())
-  name          String?
-  email         String?   @unique
+  id            String             @id @default(uuid())
+  createdAt     DateTime           @default(now())
+  email         String?            @unique
   emailVerified DateTime?
-  image         String? // ← REQUIRED by adapter (can be ignored)
-  createdAt     DateTime  @default(now())
-
-  identity AnonymousIdentity?
-
-  accounts Account[]
-  sessions Session[]
-   notifications Notification[] 
+  image         String?
+  name          String?
+  accounts      Account[]
+  identity      AnonymousIdentity?
+  notifications Notification[]
+  sessions      Session[]
 }
-
-/////////////////////////////
-// ANONYMOUS APP IDENTITY
-/////////////////////////////
 
 model AnonymousIdentity {
-  id        String   @id @default(uuid())
-  userId    String   @unique
-  username  String   @unique
-  avatarKey String
-  createdAt DateTime @default(now())
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-
+  id               String            @id @default(uuid())
+  userId           String            @unique
+  username         String            @unique
+  avatarKey        String
+  createdAt        DateTime          @default(now())
+  user             User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  chatMessages     ChatMessage[]
+  chatParticipants ChatParticipant[]
+  posts            Post[]
+  flags            PostFlag[]
+  reactions        Reaction[]
+  savedPosts       SavedPost[]
   supportResponses SupportResponse[]
-  posts Post[]
-  reactions Reaction[]
-  flags PostFlag[]
-  savedPosts SavedPost[]   
 }
 
-
-
-/////////////////////////////
-// POSTS (PUBLICLY ANONYMOUS)
-/////////////////////////////
-
 model Post {
-  id         String    @id @default(uuid())
+  id         String            @id @default(uuid())
   identityId String
   content    String
   emotionTag String?
-  state      PostState @default(ACTIVE)
-  createdAt  DateTime  @default(now())
+  state      PostState         @default(ACTIVE)
+  createdAt  DateTime          @default(now())
   expiresAt  DateTime
-
-identity AnonymousIdentity @relation(fields: [identityId], references: [id], onDelete: Cascade)
-
-  reactions Reaction[]
-  responses SupportResponse[]
-  flags     PostFlag[] 
-  savedPosts SavedPost[]   
+  chatRooms  ChatRoom[]
+  identity   AnonymousIdentity @relation(fields: [identityId], references: [id], onDelete: Cascade)
+  flags      PostFlag[]
+  reactions  Reaction[]
+  savedPosts SavedPost[]
+  responses  SupportResponse[]
 }
-
-enum PostState {
-  ACTIVE
-  FADING
-  EXPIRED
-}
-
-/////////////////////////////
-// EMPATHY REACTIONS
-/////////////////////////////
 
 model Reaction {
-  id         String   @id @default(uuid())
+  id         String            @id @default(uuid())
   postId     String
-  identityId String
   type       String
-  createdAt  DateTime @default(now())
+  createdAt  DateTime          @default(now())
+  identityId String
+  identity   AnonymousIdentity @relation(fields: [identityId], references: [id], onDelete: Cascade)
+  post       Post              @relation(fields: [postId], references: [id], onDelete: Cascade)
 
-  
-  post      Post              @relation(fields: [postId], references: [id], onDelete: Cascade)
-   identity  AnonymousIdentity @relation(fields: [identityId], references: [id], onDelete: Cascade)
-
-  @@unique([postId, identityId]) 
+  @@unique([postId, identityId])
 }
-
-/////////////////////////////
-// SUPPORT RESPONSES
-/////////////////////////////
 
 model SupportResponse {
-  id         String   @id @default(cuid())
+  id         String             @id @default(cuid())
   postId     String
   content    String
+  createdAt  DateTime           @default(now())
   identityId String?
-  createdAt  DateTime @default(now())
-
-  post       Post @relation(fields: [postId], references: [id], onDelete: Cascade)
-identity   AnonymousIdentity? @relation(fields: [identityId], references: [id], onDelete: Cascade)
+  identity   AnonymousIdentity? @relation(fields: [identityId], references: [id], onDelete: Cascade)
+  post       Post               @relation(fields: [postId], references: [id], onDelete: Cascade)
 }
 
-/////////////////////////////
-// SAFETY FLAGS
-/////////////////////////////
-
 model PostFlag {
-  id         String   @id @default(uuid())
+  id         String            @id @default(uuid())
   postId     String
-  identityId String
   reason     String
-  createdAt  DateTime @default(now())
-
-  post     Post              @relation(fields: [postId], references: [id],onDelete:Cascade)
-  identity AnonymousIdentity @relation(fields: [identityId], references: [id])
+  createdAt  DateTime          @default(now())
+  identityId String
+  identity   AnonymousIdentity @relation(fields: [identityId], references: [id])
+  post       Post              @relation(fields: [postId], references: [id], onDelete: Cascade)
 
   @@unique([postId, identityId])
 }
@@ -138,8 +99,7 @@ model Account {
   scope             String?
   id_token          String?
   session_state     String?
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
 }
@@ -149,8 +109,7 @@ model Session {
   sessionToken String   @unique
   userId       String
   expires      DateTime
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model VerificationToken {
@@ -162,37 +121,67 @@ model VerificationToken {
 }
 
 model Notification {
-  id          String   @id @default(cuid())
-  userId      String
-  type        NotificationType
-  postId      String?
-  commentId   String?
-  actorLabel  String?   // "Someone"
-  meta        Json?
-  isRead      Boolean   @default(false)
-  createdAt   DateTime  @default(now())
+  id         String           @id @default(cuid())
+  userId     String
+  type       NotificationType
+  postId     String?
+  commentId  String?
+  actorLabel String?
+  meta       Json?
+  isRead     Boolean          @default(false)
+  createdAt  DateTime         @default(now())
+  user       User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
 
-  user        User @relation(fields: [userId], references: [id], onDelete: Cascade)
+model SavedPost {
+  id         String            @id @default(uuid())
+  identityId String
+  postId     String
+  createdAt  DateTime          @default(now())
+  identity   AnonymousIdentity @relation(fields: [identityId], references: [id], onDelete: Cascade)
+  post       Post              @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@unique([identityId, postId])
+}
+
+model ChatRoom {
+  id           String            @id @default(uuid())
+  postId       String
+  createdAt    DateTime          @default(now())
+  expiresAt    DateTime
+  messages     ChatMessage[]
+  participants ChatParticipant[]
+  post         Post              @relation(fields: [postId], references: [id], onDelete: Cascade)
+}
+
+model ChatParticipant {
+  id         String            @id @default(uuid())
+  roomId     String
+  identityId String
+  identity   AnonymousIdentity @relation(fields: [identityId], references: [id], onDelete: Cascade)
+  room       ChatRoom          @relation(fields: [roomId], references: [id], onDelete: Cascade)
+
+  @@unique([roomId, identityId])
+}
+
+model ChatMessage {
+  id         String             @id @default(uuid())
+  roomId     String
+  content    String
+  createdAt  DateTime           @default(now())
+  identityId String?
+  identity   AnonymousIdentity? @relation(fields: [identityId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  room       ChatRoom           @relation(fields: [roomId], references: [id], onDelete: Cascade)
+}
+
+enum PostState {
+  ACTIVE
+  FADING
+  EXPIRED
 }
 
 enum NotificationType {
   REACTION
   COMMENT
   MILESTONE
-}
-
-///////////
-//SAVE POST
-///////////
-
-model SavedPost {
-  id         String   @id @default(uuid())
-  identityId String
-  postId     String
-  createdAt  DateTime @default(now())
-
-  identity AnonymousIdentity @relation(fields: [identityId], references: [id], onDelete: Cascade)
-  post     Post              @relation(fields: [postId], references: [id], onDelete: Cascade)
-
-  @@unique([identityId, postId])
 }

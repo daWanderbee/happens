@@ -17,8 +17,13 @@ export default function ClientShell({
       <Sidebar isOpen={isOpen} setIsOpen={setIsOpen} />
 
       <div className="flex-1 flex flex-col">
-        <Navbar setIsOpen={setIsOpen} />
+        {/* Sticky Navbar */}
+        <div className="sticky top-0 z-50">
+          <Navbar setIsOpen={setIsOpen} />
+        </div>
+
         <main className="flex-1 md:px-3">{children}</main>
+
         <IntentIsland />
       </div>
     </div>

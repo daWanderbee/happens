@@ -1,5 +1,4 @@
-
-
+import ChatListPanel from "@/components/chat/ChatListPanel";
 import NotificationsPanel from "@/components/notifications/NotificationsPanel";
 
 export default function HomeLayout({
@@ -9,10 +8,14 @@ export default function HomeLayout({
 }) {
   return (
     <div className="flex w-full bg-primary mx-auto">
-      <div className="flex-1">{children}</div>
+      {/* Feed */}
+      <div className="flex-1 bg-primary">{children}</div>
 
-      <aside className="hidden lg:block w-80 ml-3">
+      {/* Right Panel */}
+      <aside className="hidden lg:flex flex-col w-80 ml-3 gap-4 sticky top-20 h-fit">
         <NotificationsPanel />
+
+        <ChatListPanel />
       </aside>
     </div>
   );

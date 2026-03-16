@@ -16,7 +16,8 @@ import {
   faComment,
   faPaperPlane,
   faTrash,
-  faPen
+  faPen,
+  faMessage
 } from "@fortawesome/free-solid-svg-icons";
 import Overlay from "../ui/Overlay";
 import ModalPortal from "../ui/ModalPortal";
@@ -27,6 +28,7 @@ import {
 } from "@/components/ui/hover-card";
 
 import { toast } from "react-hot-toast";
+import { useRouter } from "next/navigation";
 /* =========================
    Types
 ========================= */
@@ -134,6 +136,7 @@ export default function PostCard({
   isMine = false, // ✅ add this
   identityId, // 👈 add this
 }: PostCardProps) {
+  const router = useRouter();
   /* =========================
      State
   ========================= */
@@ -501,7 +504,6 @@ export default function PostCard({
               vibrate(12);
               setSaved(!saved);
               handleSave();
-              
             }}
           />
 
@@ -570,6 +572,26 @@ export default function PostCard({
                         });
                       }}
                     />
+                  )}
+
+                  {!isMine && (
+                    <MenuButton
+                    icon={faMessage}
+                      label="Talk privately"
+                      onClick={async () => {
+                        const res = await fetch("/api/chat/start", {
+                          method: "POST",
+                          body: JSON.stringify({
+                          postId,
+                          identityId,
+                        }),
+                      });
+
+                      const room = await res.json();
+
+                      router.push(`/chat/${room.id}`);
+                    }}
+                  />
                   )}
 
                   {isMine && (

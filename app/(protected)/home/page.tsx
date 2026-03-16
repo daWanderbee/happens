@@ -16,7 +16,7 @@ export default async function ReadPage() {
   });
 
   return (
-    <main className="bg-primary">
+    <main className="bg-primary h-full">
       <section
         className="
           w-full
@@ -25,6 +25,7 @@ export default async function ReadPage() {
           rounded-t-[20px]
           shadow-md
           h-[100vh]
+          lg:h-[100%]
         "
       >
         {/* ✅ Centered content column — full on mobile, capped on desktop */}

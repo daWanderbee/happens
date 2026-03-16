@@ -53,6 +53,7 @@ export async function GET() {
   return NextResponse.json({
     username: identity.username,
     image: identity.avatarKey,
+    identityId: identity.id,
     posts,
   });
 }
