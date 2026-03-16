@@ -1,16 +1,15 @@
-// app/api/share/post/[id]/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
 export async function GET(
-  req: NextRequest,
-  context: { params: Promise<{ id: string }> },
+  req: Request,
+  { params }: { params: Promise<{ id: string }> },
 ) {
-  const { id } = await context.params;
+  const { id: postId } = await params;
 
   try {
     const post = await prisma.post.findUnique({
-      where: { id },
+      where: { id: postId },
       include: {
         reactions: true,
         responses: true,
