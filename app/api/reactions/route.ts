@@ -13,6 +13,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Login required" }, { status: 401 });
     }
 
+
     console.log("Creating reaction for identity:", identity.id);
 
     await rateLimitIdentity(identity.id);

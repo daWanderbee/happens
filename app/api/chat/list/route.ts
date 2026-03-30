@@ -32,15 +32,12 @@ export async function GET() {
 
   const result = rooms.map((r) => {
     const other = r.room.participants.find((p) => p.identityId !== identity.id);
-    console.log(other?.identity?.username, r.room.messages[0]?.content);
     return {
       id: r.room.id,
       name: other?.identity?.username || "Anonymous",
       lastMessage: r.room.messages[0]?.content || null,
     };
   });
-
-  console.log("Fetched chat rooms for identity", identity.id, result);
 
   return NextResponse.json(result);
 }

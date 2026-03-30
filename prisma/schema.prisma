@@ -40,6 +40,7 @@ model Post {
   id         String            @id @default(uuid())
   identityId String
   content    String
+  isFlagged Boolean @default(false)
   emotionTag String?
   state      PostState         @default(ACTIVE)
   createdAt  DateTime          @default(now())
@@ -67,6 +68,7 @@ model Reaction {
 model SupportResponse {
   id         String             @id @default(cuid())
   postId     String
+  isFlagged Boolean @default(false)
   content    String
   createdAt  DateTime           @default(now())
   identityId String?
@@ -184,4 +186,12 @@ enum NotificationType {
   REACTION
   COMMENT
   MILESTONE
+}
+
+model ModerationLog {
+  id        String   @id @default(cuid())
+  text      String
+  status    String   // "ok" | "warning" | "blocked"
+  score     Int
+  createdAt DateTime @default(now())
 }

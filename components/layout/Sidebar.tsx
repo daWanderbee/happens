@@ -40,7 +40,7 @@ export default function Sidebar({ isOpen, setIsOpen }: Props) {
       {/* ── Mobile overlay ── */}
       {isOpen && (
         <div
-          className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 md:hidden"
+          className="fixed inset-0 bg-black/40 backdrop-blur-sm z-100 md:hidden"
           onClick={() => setIsOpen(false)}
         />
       )}

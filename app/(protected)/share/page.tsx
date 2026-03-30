@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { cn } from "@/lib/utils";
+import { useRef } from "react";
 import { useRouter } from "next/navigation";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faShare, faSpinner } from "@fortawesome/free-solid-svg-icons";
@@ -11,33 +12,68 @@ export default function SharePage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
+  const [moderation, setModeration] = useState<any>(null);
 
-  async function handleShare() {
-    if (!content.trim()) return;
+  let timeout: any;
 
-    try {
-      setLoading(true);
-      setError(null);
 
-      const res = await fetch("/api/posts", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ content }),
-      });
+const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-      if (!res.ok) {
-        const data = await res.json();
-        throw new Error(data.error || "Something went wrong");
-      }
-
-      setContent(""); // clear composer
-      router.refresh(); // refresh to show the new post
-    } catch (err: any) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
+const checkModeration = (value: string) => {
+  if (timeoutRef.current) {
+    clearTimeout(timeoutRef.current);
   }
+
+  timeoutRef.current = setTimeout(async () => {
+    if (!value.trim()) {
+      setModeration(null);
+      return;
+    }
+
+    const res = await fetch("/api/moderate", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ text: value }),
+    });
+
+    const data = await res.json();
+    setModeration(data);
+  }, 800); // ⏳ increase delay
+};
+
+async function handleShare() {
+  if (!content.trim()) return;
+
+  // 🚫 BLOCK here
+  if (moderation?.status === "blocked") {
+    setError("Your post contains harmful content.");
+    return;
+  }
+
+  try {
+    setLoading(true);
+    setError(null);
+
+    const res = await fetch("/api/posts", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ content }),
+    });
+
+    if (!res.ok) {
+      const data = await res.json();
+      throw new Error(data.error || "Something went wrong");
+    }
+
+    setContent("");
+    setModeration(null); // reset
+    router.refresh();
+  } catch (err: any) {
+    setError(err.message);
+  } finally {
+    setLoading(false);
+  }
+}
 
   return (
     <div className="w-full ">
@@ -62,15 +98,35 @@ export default function SharePage() {
             <textarea
               value={content}
               maxLength={10000}
-              onChange={(e) => setContent(e.target.value)}
+              onChange={(e) => {
+                setContent(e.target.value);
+                checkModeration(e.target.value);
+              }}
               placeholder="Share something you’ve been holding in…"
               className={cn(
                 "w-full min-h-[180px] resize-none bg-transparent outline-none",
                 "text-[16px] leading-relaxed",
                 "text-neutral-900 placeholder:text-neutral-400",
                 "dark:text-foreground dark:placeholder:text-foreground/40",
+                moderation?.status === "blocked"
+                  ? "border border-red-500"
+                  : moderation?.status === "warning"
+                    ? "border border-yellow-500"
+                    : "",
               )}
             />
+
+            {moderation?.status === "warning" && (
+              <p className="mt-2 text-sm text-yellow-500">
+                ⚠️ This may be offensive. Consider rephrasing.
+              </p>
+            )}
+
+            {moderation?.status === "blocked" && (
+              <p className="mt-2 text-sm text-red-500">
+                ❌ This content is not allowed.
+              </p>
+            )}
 
             <div className="mt-2 text-right text-xs text-neutral-400 dark:text-foreground/40">
               {content.length}/10000
@@ -90,7 +146,7 @@ export default function SharePage() {
 
             <button
               onClick={handleShare}
-              disabled={!content.trim() || loading}
+              disabled={!content.trim() || loading || moderation?.status === "blocked"}
               className={cn(
                 "flex items-center gap-2 px-5 py-2 rounded-full text-sm font-medium transition active:scale-95",
                 content.trim() && !loading

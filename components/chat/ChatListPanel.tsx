@@ -1,5 +1,6 @@
 "use client";
 
+import { supabase } from "@/lib/supabase";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
@@ -17,6 +18,33 @@ export default function ChatListPanel() {
       .then((res) => res.json())
       .then(setRooms)
       .catch(() => {});
+  }, []);
+
+  useEffect(() => {
+    fetch("/api/chat/list")
+      .then((res) => res.json())
+      .then(setRooms);
+
+    const channel = supabase
+      .channel("chat-participants")
+      .on(
+        "postgres_changes",
+        {
+          event: "DELETE",
+          schema: "public",
+          table: "ChatParticipant",
+        },
+        (payload) => {
+          const deletedRoomId = payload.old.roomId;
+
+          setRooms((prev) => prev.filter((r) => r.id !== deletedRoomId));
+        },
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, []);
 
   return (

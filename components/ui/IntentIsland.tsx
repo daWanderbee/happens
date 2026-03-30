@@ -35,7 +35,7 @@ export default function IntentIsland() {
   return (
     <div
       className={cn(
-        "fixed bottom-6 left-1/2 -translate-x-1/2 z-40",
+        "fixed bottom-6 left-1/2 -translate-x-1/2 z-50",
         pulse && "animate-pulse-once",
       )}
     >

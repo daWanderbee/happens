@@ -95,6 +95,26 @@ export default function ChatPage({
       )
     : 7;
 
+  async function handleLeaveChat() {
+    const confirmLeave = confirm("Are you sure you want to leave this chat?");
+
+    if (!confirmLeave) return;
+
+    try {
+      await fetch("/api/chat/leave", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ roomId }),
+      });
+
+      window.location.href = "/chat";
+    } catch {
+      alert("Failed to leave chat");
+    }
+  }
+
   const expiryColor =
     daysLeft <= 1
       ? "text-red-400 border-red-400/20 bg-red-400/5"
@@ -124,6 +144,12 @@ export default function ChatPage({
                 </p>
               </div>
             </div>
+            <button
+              onClick={handleLeaveChat}
+              className="text-xs text-red-500 hover:underline"
+            >
+              Leave Chat
+            </button>
 
             {/* Expiry badge */}
             <div

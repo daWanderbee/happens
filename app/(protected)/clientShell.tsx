@@ -18,7 +18,7 @@ export default function ClientShell({
 
       <div className="flex-1 flex flex-col">
         {/* Sticky Navbar */}
-        <div className="sticky top-0 z-50">
+        <div className="sticky top-0 z-10">
           <Navbar setIsOpen={setIsOpen} />
         </div>
 
