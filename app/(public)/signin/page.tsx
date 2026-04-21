@@ -42,7 +42,7 @@ export default function SignInPage() {
     setError(null);
     setLoading("email");
     try {
-      await signIn("email", { email, callbackUrl: "/read" });
+      await signIn("email", { email, callbackUrl: "/home" });
     } catch {
       setError("Unable to send magic link. Please try again.");
       setLoading(null);
